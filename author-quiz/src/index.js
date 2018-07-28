@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import _ from 'lodash';
 
 const authors = [
     {
@@ -46,12 +47,24 @@ const authors = [
     }
 ];
 
+function getTurnData(authors) {
+    const allBooks = authors.reduce((p, c, i) => {
+        return p.concat(c.books);
+    }, []);
+    const fourRandomBooks = _.shuffle(allBooks).slice(0, 4);
+    const answer = _.sample(fourRandomBooks);
+
+    return {
+        books: fourRandomBooks,
+        author: authors.find(author => _.some(author.books, title => title === answer))
+    };
+}
+
 const state = {
-    turnData: {
-        author: authors[0],
-        books: authors[0].books
-    }
+    turnData: getTurnData(authors)
 };
+
+console.log(state);
 
 ReactDOM.render(<App {...state} />, document.getElementById('root'));
 registerServiceWorker();
