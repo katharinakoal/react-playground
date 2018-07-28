@@ -5,6 +5,8 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import _ from 'lodash';
+import { BrowserRouter, Route, withRouter } from 'react-router-dom';
+import AddAuthorForm from './AddAuthorForm';
 
 const authors = [
     {
@@ -60,9 +62,14 @@ function getTurnData(authors) {
     };
 }
 
-const state = {
-    turnData: getTurnData(authors)
-};
+function resetState() {
+    return {
+        turnData: getTurnData(authors),
+        highlight: ''
+    };
+}
+
+let state = resetState();
 
 function onAnswerSelected(answer) {
     const isCorrect = _.some(state.turnData.author.books, book => book === answer);
@@ -70,9 +77,36 @@ function onAnswerSelected(answer) {
     render();
 }
 
+function AppWrapper() {
+    return (
+        <App
+            {...state}
+            onAnswerSelected={onAnswerSelected}
+            onContinue={() => {
+                state = resetState();
+                render();
+            }}
+        />
+    );
+}
+
+const AuthorWrapper = withRouter(({ history }) => (
+    <AddAuthorForm
+        onAddAuthor={author => {
+            authors.push(author);
+            history.push('/');
+        }}
+    />
+));
+
 function render() {
     ReactDOM.render(
-        <App {...state} onAnswerSelected={onAnswerSelected} />,
+        <BrowserRouter>
+            <React.Fragment>
+                <Route exact path="/" component={AppWrapper} />
+                <Route exact path="/add" component={AuthorWrapper} />
+            </React.Fragment>
+        </BrowserRouter>,
         document.getElementById('root')
     );
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import './App.css';
 
 class Hero extends Component {
@@ -72,8 +73,25 @@ class Turn extends Component {
 }
 
 class Continue extends Component {
+    static propTypes = {
+        show: PropTypes.bool.isRequired,
+        onContinue: PropTypes.func
+    };
     render() {
-        return <div />;
+        return (
+            <div className="row continue">
+                {this.props.show ? (
+                    <div className="col-11">
+                        <button
+                            className="btn btn-primary btn-lg float-right"
+                            onClick={this.props.onContinue}
+                        >
+                            Continue
+                        </button>
+                    </div>
+                ) : null}
+            </div>
+        );
     }
 }
 
@@ -95,7 +113,8 @@ class App extends Component {
     static propTypes = {
         highlight: PropTypes.string,
         turnData: PropTypes.object,
-        onAnswerSelected: PropTypes.func
+        onAnswerSelected: PropTypes.func,
+        onContinue: PropTypes.func
     };
 
     render() {
@@ -107,7 +126,13 @@ class App extends Component {
                     highlight={this.props.highlight}
                     onAnswerSelected={this.props.onAnswerSelected}
                 />
-                <Continue />
+                <Continue
+                    show={this.props.highlight === 'correct'}
+                    onContinue={this.props.onContinue}
+                />
+                <p>
+                    <Link to="/add">Add an author</Link>
+                </p>
                 <Footer />
             </div>
         );
