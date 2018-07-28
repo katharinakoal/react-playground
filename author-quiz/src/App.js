@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './App.css';
 
 class Hero extends Component {
@@ -15,9 +16,14 @@ class Hero extends Component {
 }
 
 class Book extends Component {
+    static propTypes = {
+        title: PropTypes.string.isRequired,
+        onClick: PropTypes.func
+    };
+
     render() {
         return (
-            <div className="answer">
+            <div onClick={() => this.props.onClick(this.props.title)} className="answer">
                 <h4>{this.props.title}</h4>
             </div>
         );
@@ -25,14 +31,40 @@ class Book extends Component {
 }
 
 class Turn extends Component {
+    static propTypes = {
+        highlight: PropTypes.string,
+        author: PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            imageUrl: PropTypes.string.isRequired,
+            imageSource: PropTypes.string.isRequired,
+            books: PropTypes.arrayOf(PropTypes.string).isRequired
+        }),
+        books: PropTypes.arrayOf(PropTypes.string).isRequired,
+        onAnswerSelected: PropTypes.func
+    };
+
+    highlightToBgColor(highlight) {
+        const mapping = {
+            none: '',
+            correct: 'green',
+            wrong: 'red'
+        };
+        return mapping[highlight];
+    }
+
     render() {
         return (
-            <div className="row turn" style={{ backgroundColor: 'white' }}>
+            <div
+                className="row turn"
+                style={{ backgroundColor: this.highlightToBgColor(this.props.highlight) }}
+            >
                 <div className="col-4 offset-1">
                     <img src={this.props.author.imageUrl} className="authorimage" alt="Author" />
                 </div>
                 <div className="col-6">
-                    {this.props.books.map(title => <Book title={title} key={title} />)}
+                    {this.props.books.map(title => (
+                        <Book title={title} key={title} onClick={this.props.onAnswerSelected} />
+                    ))}
                 </div>
             </div>
         );
@@ -60,11 +92,21 @@ class Footer extends Component {
 }
 
 class App extends Component {
+    static propTypes = {
+        highlight: PropTypes.string,
+        turnData: PropTypes.object,
+        onAnswerSelected: PropTypes.func
+    };
+
     render() {
         return (
             <div className="container-fluid">
                 <Hero />
-                <Turn {...this.props.turnData} />
+                <Turn
+                    {...this.props.turnData}
+                    highlight={this.props.highlight}
+                    onAnswerSelected={this.props.onAnswerSelected}
+                />
                 <Continue />
                 <Footer />
             </div>

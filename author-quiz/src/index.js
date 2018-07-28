@@ -64,7 +64,18 @@ const state = {
     turnData: getTurnData(authors)
 };
 
-console.log(state);
+function onAnswerSelected(answer) {
+    const isCorrect = _.some(state.turnData.author.books, book => book === answer);
+    state.highlight = isCorrect ? 'correct' : 'wrong';
+    render();
+}
 
-ReactDOM.render(<App {...state} />, document.getElementById('root'));
+function render() {
+    ReactDOM.render(
+        <App {...state} onAnswerSelected={onAnswerSelected} />,
+        document.getElementById('root')
+    );
+}
+
+render();
 registerServiceWorker();
