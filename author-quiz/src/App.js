@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import './App.css';
 
 class Hero extends Component {
@@ -109,6 +110,24 @@ class Footer extends Component {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        turnData: state.turnData,
+        highlight: state.highlight
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onAnswerSelected: answer => {
+            dispatch({ type: 'ANSWER_SELECTED', answer });
+        },
+        onContinue: () => {
+            dispatch({ type: 'CONTINUE' });
+        }
+    };
+}
+
 class App extends Component {
     static propTypes = {
         highlight: PropTypes.string,
@@ -139,4 +158,7 @@ class App extends Component {
     }
 }
 
-export default App;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(App);
