@@ -7,6 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import _ from 'lodash';
 import { BrowserRouter, Route, withRouter } from 'react-router-dom';
 import AddAuthorForm from './AddAuthorForm';
+import * as Redux from 'redux';
+import * as ReactRedux from 'react-redux';
 
 const authors = [
     {
@@ -69,6 +71,11 @@ function resetState() {
     };
 }
 
+function reducer(state, action) {
+    return state;
+}
+
+let store = Redux.createStore(reducer);
 let state = resetState();
 
 function onAnswerSelected(answer) {
@@ -79,14 +86,16 @@ function onAnswerSelected(answer) {
 
 function AppWrapper() {
     return (
-        <App
-            {...state}
-            onAnswerSelected={onAnswerSelected}
-            onContinue={() => {
-                state = resetState();
-                render();
-            }}
-        />
+        <ReactRedux.Provider store={store}>
+            <App
+                {...state}
+                onAnswerSelected={onAnswerSelected}
+                onContinue={() => {
+                    state = resetState();
+                    render();
+                }}
+            />
+        </ReactRedux.Provider>
     );
 }
 
